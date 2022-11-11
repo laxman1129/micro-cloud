@@ -2,4 +2,190 @@
 
 ## Setting up raspberry pi
 
+### Download raspbery pi os image
+
+``` bash
+# download a copy from official site using curl command
+curl -Lo https://downloads.raspberrypi.org/raspios_lite_arm64/images/raspios_lite_arm64-2022-09-26/2022-09-22-raspios-bullseye-arm64-lite.img.xz
+```
+__Manual download:__  
+download from the site https://www.raspberrypi.com/software/operating-systems/#raspberry-pi-os-64-bit
+
+__Install xz utils for uncompressing .xz file__  
+```bash
+#install xz on fedora, refer link below for other distributions
+sudo dnf -y install xz
+
+#to extract the image file provide file loaction in <file>
+unxz 2022-09-22-raspios-bullseye-arm64-lite.img.xz
+# renaming to have smaller file name
+mv 2022-09-22-raspios-bullseye-arm64-lite.img rpi.img
+```
+
+### Prepare SD cards
+
+Insert the sd card in the card reader
+
+```bash
+#to see the sd card location in /dev (devices)
+sudo fdisk -l    
+
+#to unount the existing partitions
+#device name could be /dev/mmcblkp0 OR /dev/sdb OR /dev/sdc etc,
+umount /dev/mmcblkp01 
+
+#to partition the cared using commandline
+sudo fdisk /dev/mmcblk0  
+#Follow below instructions
+
+#press d : to delete the partitions (press 1/2 to delete all the partitions)
+#press n  : to create a new partition
+#press p : to create a primary partiion
+#press enter: to provide the parameters asked
+#press t : create the partion table type
+#press b : for FAT paetrition table
+#press w : to save the changes
+
+# to format the disk partition type dos/FAT 
+sudo mkfs.vfat /dev/mmcblk0 -I 
+```
+
+### Creating bootable image on SD card
+
+```bash
+# this command flashes the sdcard with the OS, provide image file name
+sudo dd if=rpi.img of=/dev/mmcblk0 bs=8M status=progress  
+
+#unmount the partitions if they are mounted
+umount /dev/mmcblkp01
+umount /dev/mmcblkp02 
+
+```
+
+- Remove SD card from the reader 
+- insert in the pi 
+- connect pi to power
+- wait for a minute or so to initialize 
+- this will create /boot folder on the raspberry pi card with some default files
+- disconnect pi from power
+- and insert in the reader again
+
+```bash
+#for headless install enable ssh and provide network details
+cd /run/media/`whoami`/boot
+#this tells the pi to run ssh server on startup
+touch ssh    
+
+#this file has the wifi details
+touch wpa_supplicant.conf
+
+#edit wpa_supplicant.conf and paste below content with your network info
+nano wpa_supplicant.conf
+
+#content to add
+#eg.
+# ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+# update_config=1
+# country=US
+#
+# network={
+# ssid=wifi-network-name
+#  psk=wifi-password
+# }
+# 
+ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev
+update_config=1
+country=[WIFI COUNTRY CODE]
+
+network={
+ ssid="[NETWORK SSID]"
+ psk="[NETWORK PASSWORD]"
+}
+
+# edit cmdline.txt
+sudo nano cmdline.txt
+
+# append below content at the end so that k3s will run smoothly
+
+cgroup_memory=1 cgroup_enable=memory
+
+# sample line should look like below
+# console=serial0,115200 console=tty1 root=PARTUUID=2dd69f04-02 rootfstype=ext4 fsck.repair=yes rootwait cgroup_memory=1 cgroup_enable=memory
+
+#we can also add unused ip address in our subnet here
+# sample will look like below
+# onsole=serial0,115200 console=tty1 root=PARTUUID=2dd69f04-02 rootfstype=ext4 fsck.repair=yes rootwait cgroup_memory=1 cgroup_enable=memory ip=192.168.1.149::192.168.1.1:255.255.255.0:rpi-master:wlp3s0:off
+
+#ip=<available ip address>::<gateway ip address>:<subnet mask>:<hostname>:<nic-wlp3s0-or-eth0>:<turn off auto config>
+
+
+```
+- Remove the SDcard from the card reader
+- insert the card in the raspberry pi
+- wait for the pi to boot and complete initialization might take a couple of mins
+
+```bash
+#run below commands to identify which ip addresses are allocated to the pi
+arp -a
+
+# OR 
+
+sudo nmap -sn 192.168.1.0/24 
+```
+
+### connect to raspberry pi using ssh from laptop
+
+```bash
+#if the ip of pi is 192.168.1.146 then ssh using 
+ssh pi@192.168.1.146
+# default password is raspberry
+
+# you can execute below command to change raspberry pi config after sshing into the pi
+sudo raspi-config
+# change the device name to something like rpi-kluster-x, e.g. rpi-kluster-1, rpi-kluster-2, rpi-kluster-0 etc.
+```
+
+---
+---
+
 ## Setting up k3s
+
+```bash
+# switch user (su) to root, as we'll do many root related activities now
+sudo su -
+
+
+```
+
+```bash
+```
+
+```bash
+```
+
+```bash
+```
+
+```bash
+```
+
+```bash
+```
+
+```bash
+```
+
+
+---
+---
+
+## Reference
+
+https://mirailabs.io/blog/building-a-microcloud/  
+https://www.youtube.com/watch?v=X9fSMGkjtug   
+https://computingforgeeks.com/how-to-extract-xz-files-on-linux/  
+https://linuxhint.com/how-to-use-wpa-supplicant/  
+https://www.systutorials.com/docs/linux/man/5-wpa_supplicant.conf/   
+https://www.ithands-on.com/2020/12/linux-101-overview-of-cgroups-control.html  
+
+

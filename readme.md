@@ -193,10 +193,20 @@ cat /var/lib/rancher/k3s/server/node-token
 #login to other pi
 
 # to install k3s as worker node non node 1, need to pass token generated in last step
-curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.146:6443 K3S_TOKEN=K103004a081298c30c4db4dc0ce4f194ceb0a134ce8f83e9d882971684f47cce60d::server:289e17a06cbc2d674a3e4bf8405e22ad K3S_NODE_NAME="NODE_1" sh -
+curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.146:6443 K3S_TOKEN=K103004a081298c30c4db4dc0ce4f194ceb0a134ce8f83e9d882971684f47cce60d::server:289e17a06cbc2d674a3e4bf8405e22ad K3S_NODE_NAME="pi-1" sh -
 
 # to install k3s as worker node non node 2, need to pass token generated in last step
-curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.146:6443 K3S_TOKEN=K10b8ae46fc62e22870ab23b6d5130a4899f2f9da662180b1074382309b47821018::server:dd3b51c96c46916e392c90e4812f72c5 K3S_NODE_NAME="NODE_2" sh -
+curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.146:6443 K3S_TOKEN=K103004a081298c30c4db4dc0ce4f194ceb0a134ce8f83e9d882971684f47cce60d::server:289e17a06cbc2d674a3e4bf8405e22ad K3S_NODE_NAME="pi-2" sh -
+
+# to uninstall server
+sudo su -
+/usr/local/bin/k3s-uninstall.sh
+
+# to uninstall server
+sudo su -
+/usr/local/bin/k3s-agent-uninstall.sh
+#
+
 ```
 
 - only master node has kubectl installed on it
@@ -208,10 +218,48 @@ kubectl get nodes -o wide
 
 ```
 
+### install rancher (optional :- it provides GUI for k3s cluster)
 ```bash
+#new config directory
+mkdir /etc/rancher
+#location of config file
+mkdir /etc/rancher/rke2
+#config file
+cd /etc/rancher/rke2
+nano config.yaml
+
+# add below content, without has and space after that
+# token can be any value
+# tls-san is the current ip address. its fixed
+#
+# token: its lovely weather we are having I hope the weather continues
+# tls-san: 
+#   - 192.168.1.146
+
+
+curl -sfL https://get.rancher.io | sh -
+
+# check youtube vid for more details
 ```
 
+### installing nginx servers on the cluster
+
+- created the kubernetes deployment yaml using vscode kubernetes deployment plugin
+
+
 ```bash
+# create deployment file
+nano k3s-nginx.yaml
+# paste content from the file
+# to apply deployments
+kubectl apply -f k3s-nginx.yaml
+
+# to check status
+kubectl get pods -o wide
+
+# to delete all deployments 
+kubectl delete deployment --all
+
 ```
 
 ```bash

@@ -137,7 +137,7 @@ sudo nmap -sn 192.168.1.0/24
 
 ```bash
 #if the ip of pi is 192.168.1.146 then ssh using 
-ssh pi@192.168.1.146
+ssh pi-0@192.168.1.146
 # default password is raspberry
 
 # you can execute below command to change raspberry pi config after sshing into the pi

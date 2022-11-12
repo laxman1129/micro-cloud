@@ -165,6 +165,9 @@ reboot
 # after reboot ping to check if the pi is up
 ping 192.168.1.146
 
+#connect to pi
+ssh pi-0@192.168.1.146
+
 # switch to root again
 sudo su -
 
@@ -198,11 +201,11 @@ curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.146:6443 K3S_TOKEN=K103
 # to install k3s as worker node non node 2, need to pass token generated in last step
 curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.146:6443 K3S_TOKEN=K103004a081298c30c4db4dc0ce4f194ceb0a134ce8f83e9d882971684f47cce60d::server:289e17a06cbc2d674a3e4bf8405e22ad K3S_NODE_NAME="pi-2" sh -
 
-# to uninstall server
+# to uninstall server if needed
 sudo su -
 /usr/local/bin/k3s-uninstall.sh
 
-# to uninstall server
+# to uninstall agent if needed
 sudo su -
 /usr/local/bin/k3s-agent-uninstall.sh
 #

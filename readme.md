@@ -114,7 +114,7 @@ cgroup_memory=1 cgroup_enable=memory
 
 #we can also add unused ip address in our subnet here
 # sample will look like below
-# onsole=serial0,115200 console=tty1 root=PARTUUID=2dd69f04-02 rootfstype=ext4 fsck.repair=yes rootwait cgroup_memory=1 cgroup_enable=memory ip=192.168.1.149::192.168.1.1:255.255.255.0:rpi-master:wlp3s0:off
+# console=serial0,115200 console=tty1 root=PARTUUID=2dd69f04-02 rootfstype=ext4 fsck.repair=yes rootwait cgroup_memory=1 cgroup_enable=memory ip=192.168.1.149::192.168.1.1:255.255.255.0:rpi-master:wlp3s0:off
 
 #ip=<available ip address>::<gateway ip address>:<subnet mask>:<hostname>:<nic-wlp3s0-or-eth0>:<turn off auto config>
 

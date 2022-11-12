@@ -142,7 +142,7 @@ ssh pi-0@192.168.1.146
 
 # you can execute below command to change raspberry pi config after sshing into the pi
 sudo raspi-config
-# change the hostname to something like rpi-kluster-x, e.g. rpi-kluster-1, rpi-kluster-2, rpi-kluster-0 etc.
+# change the hostname to something like pi-x, e.g. pi-1, pi-2, pi-0 etc.
 ```
 
 ---

@@ -142,7 +142,7 @@ ssh pi@192.168.1.146
 
 # you can execute below command to change raspberry pi config after sshing into the pi
 sudo raspi-config
-# change the device name to something like rpi-kluster-x, e.g. rpi-kluster-1, rpi-kluster-2, rpi-kluster-0 etc.
+# change the hostname to something like rpi-kluster-x, e.g. rpi-kluster-1, rpi-kluster-2, rpi-kluster-0 etc.
 ```
 
 ---
@@ -150,20 +150,62 @@ sudo raspi-config
 
 ## Setting up k3s
 
+### configuring iptables
+
 ```bash
 # switch user (su) to root, as we'll do many root related activities now
 sudo su -
 
+# to enable iptables
+sudo iptables -F
+
+# restart the pi
+reboot
+
+# after reboot ping to check if the pi is up
+ping 192.168.1.146
+
+# switch to root again
+sudo su -
 
 ```
 
-```bash
-```
+__setup other raspberry pi nodes also like this so that we can build the cluster__
+
+### master node setup
 
 ```bash
+# to download k3s, K3S_KUBECONFIG_MODE="644" for rancher
+curl -sfL https://get.k3s.io | K3S_KUBECONFIG_MODE="644" sh -
+
+# check if k3s is installed
+kubectl get nodes
+
+# to get the token while installing other nodes
+cat /var/lib/rancher/k3s/server/node-token
+
 ```
 
+### worker node setup
+
 ```bash
+
+#login to other pi
+
+# to install k3s as worker node non node 1, need to pass token generated in last step
+curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.146:6443 K3S_TOKEN=K103004a081298c30c4db4dc0ce4f194ceb0a134ce8f83e9d882971684f47cce60d::server:289e17a06cbc2d674a3e4bf8405e22ad K3S_NODE_NAME="NODE_1" sh -
+
+# to install k3s as worker node non node 2, need to pass token generated in last step
+curl -sfL https://get.k3s.io | K3S_URL=https://192.168.1.146:6443 K3S_TOKEN=K10b8ae46fc62e22870ab23b6d5130a4899f2f9da662180b1074382309b47821018::server:dd3b51c96c46916e392c90e4812f72c5 K3S_NODE_NAME="NODE_2" sh -
+```
+
+- only master node has kubectl installed on it
+
+```bash
+# run kubectl get nodes 
+kubectl get nodes
+kubectl get nodes -o wide
+
 ```
 
 ```bash
@@ -183,9 +225,18 @@ sudo su -
 
 https://mirailabs.io/blog/building-a-microcloud/  
 https://www.youtube.com/watch?v=X9fSMGkjtug   
+https://docs.k3s.io/quick-start  
 https://computingforgeeks.com/how-to-extract-xz-files-on-linux/  
 https://linuxhint.com/how-to-use-wpa-supplicant/  
 https://www.systutorials.com/docs/linux/man/5-wpa_supplicant.conf/   
 https://www.ithands-on.com/2020/12/linux-101-overview-of-cgroups-control.html  
+https://www.linode.com/docs/guides/what-is-iptables/  
+
+
+
+
+
+https://programming.vip/docs/61dfc8fd787e6.html  
+
 
 
